@@ -17,7 +17,7 @@
    then put your PC's IP address in SERVER_IP below, port 9080 (instead of default 80):
 */
 //#define SERVER_IP "192.168.25.27:8080" // PC address with emulation on host
-#define SERVER_IP "192.168.25.27:8080"
+#define SERVER_IP "192.168.25.22:8080"
 
 #ifndef STASSID
 #define STASSID "SK_WiFiA41B"
@@ -59,8 +59,11 @@ void loop() {
     HTTPClient http;
 
     Serial.print("[HTTP] begin...\n");
-    // configure traged server and url
-    http.begin(client, "http://" SERVER_IP "/"); //HTTP
+
+    
+    // Node.js 로 구축한 웹서버의 주소 입력
+    http.begin(client, "http://" SERVER_IP "/");
+    //헤더에 보내고자 하는 데이터의 ContentType 명시
     http.addHeader("Content-Type", "application/json");
   
     Serial.print("[HTTP] POST...\n");
@@ -69,11 +72,14 @@ void loop() {
     //온습도 값 읽기
     DHT.read(DHT11_PIN);
 
+    //적외선 센서 값 읽기
+    state = digitalRead(pin);
+    
     int temp = DHT.temperature;
     int humi = DHT.humidity;
-    state = digitalRead(pin);
-    int httpCode = http.POST("&temp=" + String(temp) + "&humi=" + String(humi));
-  //+ "&state=" + String(state)
+    //웹서버에 Post 전송
+    int httpCode = http.POST("&temp=" + String(temp) + "&humi=" + String(humi) +  "&state=" + String(state));
+
     // httpCode will be negative on error
     if (httpCode > 0) {
       // HTTP header has been send and Server response header has been handled
@@ -93,5 +99,5 @@ void loop() {
     http.end();
   }
 
-  delay(10000);
+  delay(1000);
 }

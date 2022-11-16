@@ -53,11 +53,11 @@ void loop() {
     Serial.print("[HTTP] begin...\n");
     // configure traged server and url
     http.begin(client, SERVER_IP); //HTTP
-    http.addHeader("Content-Type", "text/plain");
+    http.addHeader("Content-Type", "application/json");
 
     Serial.print("[HTTP] POST...\n");
     // start connection and send HTTP header and body
-    int httpCode = http.POST("Hi");
+    int httpCode = http.POST("{\"hello\":\"world\"}");
 
     // httpCode will be negative on error
     if (httpCode > 0) {
