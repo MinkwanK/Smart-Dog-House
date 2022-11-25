@@ -48,6 +48,8 @@ const User = mongoose.model('User',UserSchema);
 //module.exports = {User};
 
 
+
+
 app.get('/',(req,res)=> {
     res.writeHead(200,{'Content-Type' : 'text/html'});
     res.end(result);

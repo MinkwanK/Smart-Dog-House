@@ -4,7 +4,7 @@
     Created on: 21.11.2016
 
 */
-
+#include "HX711.h"
 #include <DFRobot_DHT11.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
@@ -29,6 +29,11 @@ DFRobot_DHT11 DHT;
 int pin = 5;
 int state = 0;
 
+// HX711 circuit wiring
+const int LOADCELL_DOUT_PIN = 5;
+const int LOADCELL_SCK_PIN = 16;
+
+HX711 scale;
 void setup() {
 
   Serial.begin(115200);
@@ -48,6 +53,7 @@ void setup() {
   Serial.println(WiFi.localIP());
 
   pinMode(pin,INPUT);
+  scale.begin(LOADCELL_DOUT_PIN, LOADCELL_SCK_PIN);
 
 }
 
@@ -74,8 +80,21 @@ void loop() {
 
     //적외선 센서 값 읽기
     state = digitalRead(pin);
-    
+
+     if (scale.is_ready()) {
+    scale.set_scale();    
+    Serial.println("Tare... remove any weights from the scale.");
+    delay(5000);
+    scale.tare();
+    Serial.println("Tare done...");
+    Serial.print("Place a known weight on the scale...");
+    delay(5000);
+    long reading = scale.get_units(10);
+    Serial.print("Result: ");
+    Serial.println(reading);
+  } 
     int temp = DHT.temperature;
+   
     int humi = DHT.humidity;
     //웹서버에 Post 전송
     int httpCode = http.POST("&temp=" + String(temp) + "&humi=" + String(humi) +  "&state=" + String(state));
