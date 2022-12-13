@@ -9,7 +9,7 @@ class SocketApplication {
         private lateinit var socket : Socket
         fun get():Socket{
             try{
-                socket = IO.socket("http://192.168.25.22:8080")
+                socket = IO.socket("http://192.168.150.84:8080")
             } catch(e:URISyntaxException){
                 e.printStackTrace()
             }

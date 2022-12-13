@@ -7,7 +7,7 @@
     <data>
         <variable
             name="activity"
-            type="com.example.schoolproject.DogSpeciesActivity"/>
+            type="com.example.schoolproject.CatSpeciesActivity"/>
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -19,17 +19,17 @@
         <!-- recycler view to display our data -->
 
         <EditText
-            android:id="@+id/DogSeachEditText"
+            android:id="@+id/CatSeachEditText"
             android:layout_width="414dp"
             android:layout_height="53dp"
             android:layout_marginStart="24dp"
             android:layout_marginEnd="8dp"
             android:hint="품종을 선택해주세요"
-            android:textAlignment="center"
             android:text=""
             android:textColor="@color/purple_500"
             android:textColorHint="#000000"
             android:textSize="24sp"
+            android:textAlignment="center"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -43,7 +43,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/DogSeachEditText" />
+            app:layout_constraintTop_toBottomOf="@+id/CatSeachEditText" />
 
         <Button
             android:id="@+id/buttontogomain"

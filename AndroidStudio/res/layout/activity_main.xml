@@ -1,52 +1,223 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#FFFFFF"
-    tools:context=".MainActivity">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <ImageView
-        android:id="@+id/infraredimage"
-        android:layout_width="191dp"
-        android:layout_height="162dp"
-        android:layout_marginTop="28dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-        android:src="@drawable/pawprint" />
+    <data>
+        <variable
+            name="activity"
+            type="com.example.schoolproject.MainActivity"/>
 
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="264dp"
-        android:layout_height="85dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+    </data>
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#FFFFFF"
+        tools:context=".MainActivity"
+        tools:layout_editor_absoluteX="33dp"
+        tools:layout_editor_absoluteY="0dp">
+
+
+        <ImageView
+            android:id="@+id/FanImage"
+            android:layout_width="175dp"
+            android:layout_height="85dp"
+            android:layout_marginBottom="28dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:srcCompat="@drawable/fan"
+            tools:srcCompat="@drawable/fan" />
+
+        <ImageView
+            android:id="@+id/infraredimage"
+            android:layout_width="183dp"
+            android:layout_height="135dp"
+            android:layout_marginTop="24dp"
+            android:src="@drawable/pawprint"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.513"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="264dp"
+            android:layout_height="85dp"
+            android:layout_marginStart="64dp"
+            android:layout_marginEnd="64dp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/temptextview"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="0 도"
+                android:textAlignment="center"
+                android:textColor="#000000"
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/humitextview"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="0 %"
+                android:textAlignment="center"
+                android:textColor="#000000"
+                android:textSize="24sp" />
+        </LinearLayout>
+
+        <Switch
+            android:id="@+id/automode"
+            android:layout_width="223dp"
+            android:layout_height="66dp"
+            android:layout_marginStart="161dp"
+            android:layout_marginEnd="162dp"
+            android:layout_marginBottom="23dp"
+            android:text="선풍기 수동 조작"
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toTopOf="@+id/FanImage"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/linearLayout2"
+            android:layout_width="300dp"
+            android:layout_height="80dp"
+            android:layout_marginStart="50dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="50dp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/infraredimage">
+
+            <TextView
+                android:id="@+id/dognametxt"
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:layout_marginEnd="0dp"
+                android:text="뽀순이"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/dogagetxt"
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="0dp"
+                android:text="3살"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/dogweighttxt"
+                android:layout_width="100dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="0dp"
+                android:text="1kg"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="24sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayout3"
+            android:layout_width="300dp"
+            android:layout_height="67dp"
+            android:layout_marginStart="50dp"
+            android:layout_marginEnd="50dp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
+
+            <TextView
+                android:id="@+id/eatcaltxt"
+                android:layout_width="135dp"
+                android:layout_height="match_parent"
+                android:text="0kcal"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/textView8"
+                android:layout_width="30dp"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="0dp"
+                android:text=":"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/needcaltxt"
+                android:layout_width="135dp"
+                android:layout_height="match_parent"
+                android:text="0kcal"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="24sp" />
+        </LinearLayout>
 
         <TextView
-            android:id="@+id/temptextview"
+            android:id="@+id/fanstate"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="0 도"
-            android:textAlignment="center"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="60dp"
+            android:layout_marginBottom="52dp"
+            android:text="OFF"
             android:textColor="#000000"
-            android:textSize="24sp" />
+            android:textSize="24sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-        <TextView
-            android:id="@+id/humitextview"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="0 %"
+        <EditText
+            android:id="@+id/feedtime_edittext"
+            android:layout_width="230dp"
+            android:layout_height="61dp"
+            android:layout_marginStart="36dp"
+            android:layout_marginBottom="24dp"
+            android:ems="2"
+            android:hint="사료 급여 시간 설정"
+            android:inputType="number"
+            android:text="30"
             android:textAlignment="center"
-            android:textColor="#000000"
-            android:textSize="24sp" />
-    </LinearLayout>
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toTopOf="@+id/automode"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout3"
+            app:layout_constraintVertical_bias="1.0" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <Button
+            android:id="@+id/feedtimebtn"
+            android:layout_width="91dp"
+            android:layout_height="61dp"
+            android:layout_marginEnd="24dp"
+            android:text="설정"
+            android:textSize="24sp"
+            app:layout_constraintBottom_toBottomOf="@+id/feedtime_edittext"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.9"
+            app:layout_constraintStart_toEndOf="@+id/feedtime_edittext"
+            app:layout_constraintTop_toTopOf="@+id/feedtime_edittext" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

@@ -4,15 +4,12 @@
     Created on: 21.11.2016
 
 */
-#include "HX711.h"
+
 #include <DFRobot_DHT11.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
-#include <ThreeWire.h>  
-#include <RtcDS1302.h>
-#include<Servo.h>
 #include <ArduinoJson.h>
-Servo servo; 
+
 
 /* this can be run with an emulated server on host:
         cd esp8266-core-root-dir
@@ -27,47 +24,29 @@ Servo servo;
 #ifndef STASSID
 #define STASSID "Kmk"
 #define STAPSK  "alsrhks0805"
-#define DHT11_PIN 16
+#define DHT11_PIN 4
 #endif
 
 DFRobot_DHT11 DHT;
 
 //온습도 핀
-int pin = 0;
 
-int state = 0;
-
-// 무게센서
-const int LOADCELL_DOUT_PIN = 5;
-const int LOADCELL_SCK_PIN = 16;
-//시간 
-const int RST = 13;
-const int DATA = 12;
-const int CLOCK = 14;
-ThreeWire myWire(12,14,13); // IO, SCLK, CE
-RtcDS1302<ThreeWire> Rtc(myWire);
-float calibration_factor = 270000;
-int mortor = 4;
-int angle = 0; 
-HX711 scale;
+int FanA = 16;
+int FanB = 5;
+bool automode = true;
+bool fan = false;
+int AA = 14;
+int AB = 12;
+int sensor = 0;
+int value = 0;
 
 
-float need = 0.0f; //get()으로 받아올 거다.
-bool dish = false;
-float amount = 0.0f;
-int SelectedTime = 30;
-boolean FoodCheck = false;
+
 
 
 
 //////////////////////////////////////////////////////////////////////////////////////
 void setup() {
-
-  servo.attach(mortor);
-
-  servo.write(180);
-  
-  Rtc.Begin();
 
   Serial.begin(115200);
 
@@ -81,43 +60,60 @@ void setup() {
   Serial.print("Connected! IP address: ");
   //Serial.println(WiFi.localIP());
 
-  pinMode(pin,INPUT);
-    scale.begin(LOADCELL_DOUT_PIN, LOADCELL_SCK_PIN);
 
-  scale.set_scale();
+   pinMode(FanA,OUTPUT);
+   pinMode(FanB,OUTPUT);
+   pinMode(AA, OUTPUT);  // AA를 출력 핀으로 설정
+   pinMode(AB, OUTPUT);  // AB를 출력 핀으로 설정
 
-  scale.tare(); //Reset the scale to 0
+   digitalWrite(FanA,HIGH);
+   digitalWrite(FanB,HIGH);
+      
+
 }
-
-
-
 
 void loop() {
   // wait for WiFi connection
+  value = analogRead(sensor);
+  int water_level =map(value,0,1024,0,300);
+  
+    if(water_level<100){
+  digitalWrite(AA, HIGH);  // 정방향으로 모터 회전
+  digitalWrite(AB, LOW); // 5초동안 상태 유지(1000ms = 5s)
+    }
+    else
+    {
+      digitalWrite(AA, LOW);  // 정방향으로 모터 회전
+      digitalWrite(AB, LOW); // 5초동안 상태 유지(1000ms = 5s)
+    }
+    
   if ((WiFi.status() == WL_CONNECTED)) {
 
     WiFiClient client;
     HTTPClient http;
+    
+    Serial.print("[HTTP] begin...\n");
 
-     scale.set_scale(calibration_factor); 
-    Serial.print("Reading: ");
-    amount = scale.get_units();
-     Serial.println(amount,3);
-
-     if (http.begin(client, "http://192.168.150.84:8080/")) {  // HTTP
+//http.get() 시작
+    if (http.begin(client, "http://192.168.150.84:8080")) {  // HTTP
 
 
       Serial.print("[HTTP] GET...\n");
       // start connection and send HTTP header
       int httpCode = http.GET();
-      String result = http.getString();
-      Serial.println(result);
 
-    DynamicJsonDocument doc(1024);
-    deserializeJson(doc, result);
-    need = doc["need"];
-    SelectedTime = doc["feedtime"];
-    
+      String result = http.getString();
+
+      DynamicJsonDocument doc(1024);
+      deserializeJson(doc, result);
+      const char* jsondata;
+      fan = doc["Fan"];
+      automode = doc["automode"];
+      
+
+      //수동모드에서는 꼭 팬을 끄고 자동모드로 변환해야한다.
+  
+      // httpCode will be negative on error
       if (httpCode > 0) {
         // HTTP header has been send and Server response header has been handled
         Serial.printf("[HTTP] GET... code: %d\n", httpCode);
@@ -136,56 +132,9 @@ void loop() {
       Serial.printf("[HTTP} Unable to connect\n");
     }
 
+//http.get()끝!
+    
 
-    
-    Serial.print("[HTTP] begin...\n");
-    
-   
-    RtcDateTime now = Rtc.GetDateTime();
-       
-    Serial.println(now.Second());
-    
-   
-    if( SelectedTime <= now.Second() &&  now.Second() < SelectedTime + 10  ) //사료 지급 주기가 됐을 때! (원래는 시간 단위인데 시연이어서 초단위)
-    {
-
-      
-      if(amount >= need-0.005) //사료 지급 주기가 됐는데 사료가 가득 차있을대
-      {
-        //dish = true; //밥을 줄 필요가 없다.
-      }
-      else if(0.010 < amount <need-0.005) //사료 지급 주기가 됐는데 사료가 좀 남았을 때
-      {
-        //dish = false; //밥을 줘야한다.
-        //rest = need - amount;
-        angle = -180;
-        servo.write(angle);
-      }
-      else //사료통이 아예 비었을 때 
-      {
-        //dish = false;
-        //rest = 0.0; 
-        angle = -180;
-        servo.write(angle);
-      }
-    }
-
-    
-  
-    if(amount >= need - 0.005) //사료통 닫기
-    {
-       //dish = true;
-       angle = 180;
-       servo.write(angle);
-    }
-      
-    
-    //먹은 양 
-    float Feed = 0.000f;
-    Feed = need-amount;
-    //Serial.println(amount,3);
-    //Serial.println(Feed,3);
-    
     // Node.js 로 구축한 웹서버의 주소 입력
     http.begin(client, "http://" SERVER_IP "/");
     //헤더에 보내고자 하는 데이터의 ContentType 명시
@@ -195,20 +144,54 @@ void loop() {
     // start connection and send HTTP header and body
 
     //온습도 값 읽기
-    //DHT.read(DHT11_PIN);
+    DHT.read(DHT11_PIN);
+    
+ 
 
-    //적외선 센서 값 읽기
-    state = digitalRead(pin);
-    Serial.println(state);
+    int temp = DHT.temperature;
+    int humi = DHT.humidity;
+    Serial.println(temp);
+    Serial.println(humi); 
 
-    //int temp = DHT.temperature;
-    //int humi = DHT.humidity;
+    //fan이 true이면 무조건 선풍기 작동
+    //fan이 false이면 무조건 선풍기 끔.
+
+      if(automode == false)
+      {
+       if(fan == true)
+       {
+       digitalWrite(FanA,LOW);
+      digitalWrite(FanB,HIGH);
+      }
+      else
+      {
+      digitalWrite(FanA,HIGH);
+      digitalWrite(FanB,HIGH);
+      }
+    }
+   
+  if(automode==true)
+ {
+    if(temp >30)
+    {
+      digitalWrite(FanA,LOW);
+      digitalWrite(FanB,HIGH);
+    }
+    else if(temp <=30)
+    {
+          digitalWrite(FanA,HIGH);
+      digitalWrite(FanB,HIGH);
+    }
+}
+ 
+
     
     //웹서버에 Post 전송
-   // int httpCode = http.POST("&temp=" + String(temp) + "&humi=" + String(humi) +  "&state=" + String(state));
-    int httpCode;
-    if(Feed>=0)
-    httpCode = http.POST("&Feed=" + String(Feed,3) + "&state=" + String(state)  );
+   int httpCode = http.POST("&temp=" + String(temp) + "&humi=" + String(humi));
+
+  
+  
+
 
 
     // httpCode will be negative on error

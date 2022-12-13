@@ -6,6 +6,7 @@ var http = require('http').createServer(app);
 const ip = require('ip');
 const querystring = require('querystring');
 const mongoose = require('mongoose');
+const { Socket } = require('socket.io');
 
 //브라우저와 서버 간의 실기간,양방향, 이벤트 기반 통신을 가능하게 해주는 Socket 통신 라이브러리
 //소켓 통신을 위한 모듈
@@ -15,13 +16,18 @@ var io = require('socket.io')(http);
 var temp = 0;
 var humi = 0;
 var state = 0;
+var Feed = 0.0;
+var Fan = false;
+var automode = false;
+var need = 0.0;
+var feedtime = 0;
 
 http.listen(port, () => {
     console.log("Server is Running...");
     console.dir(ip.address());
 });
 
-
+/*
 mongoose.connect("mongodb+srv://dog:101401@smartdoghouse.uqibovh.mongodb.net/?retryWrites=true&w=majority",{
 
 }).then(()=> console.log("DB Connected..."))
@@ -47,17 +53,33 @@ const User = mongoose.model('User',UserSchema);
 //User 모델을 외부에서 쓸 수 있도록 export
 //module.exports = {User};
 
-
+*/
 
 
 app.get('/',(req,res)=> {
-    res.writeHead(200,{'Content-Type' : 'text/html'});
-    res.end(result);
+
+   
+    
+        res.send({automode : automode, Fan : Fan, need : need, feedtime : feedtime})
+  
+    /*
+    if(automode == false)
+    {
+        if(Fan == true)
+        res.send("analog true")
+        else if(Fan==false)
+        res.send("analog false")
+    }
+    else if(automode == true)
+    {
+        res.send("auto")
+    }
+    */
 });
 
 app.post('/',(req,res)=> {
 
-    console.log('Receive');
+    //console.log('Receive');
     res.end("I got a  Message");
    
     req.on('data',function(chunk){
@@ -69,8 +91,10 @@ app.post('/',(req,res)=> {
         temp = data.temp;
         humi = data.humi;
         state = data.state;
+        Feed = data.Feed;
+    
 
-        console.log(temp + " " + humi + " " + state);
+      
 /*
         const user = new User({
             ModelID : 0,
@@ -103,16 +127,45 @@ io.on("connection",(socket)=>{
     //request temp and humi 메세지를 받으면 이벤트 실행
     socket.on("request temp and humi",(obj)=>{
         
-        console.log("Someone want temp");
+       
         //모바일 앱으로 메세지 발송
         socket.emit('Send Temp',temp);
         socket.emit('Send Humi',humi);
+   
         
     });
     //모바일 앱으로부터 메세지 수신
     socket.on("request infrared", (obj)=>{
         //모바일 앱에 메세지 발송
         socket.emit('Send Infrared',state);
+    });
+
+    socket.on("request feed",(obj)=>{
+        socket.emit('Send Feed',Feed);
+    });
+
+    socket.on("request fan",(obj)=>{
+        if(Fan==false)
+        Fan= true;
+        else
+        Fan = false;
+    });
+    socket.on("request analog",(obj)=>{
+            automode = false;
+    });
+    socket.on("request auto",(obj)=>{
+        automode = true;
+});
+
+    socket.on("request need",(obj)=>{
+            need = obj;
+            need = need.toFixed(3);
+            console.log(need);
+    });
+
+    socket.on("request feedtime",(obj)=>{
+          feedtime = obj;  
+          console.log(feedtime);
     });
 
     

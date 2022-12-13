@@ -14,7 +14,7 @@ void setup() {
 
   scale.set_scale();
 
-scale.tare(); //Reset the scale to 0
+  scale.tare(); //Reset the scale to 0
 }
 
 //13000

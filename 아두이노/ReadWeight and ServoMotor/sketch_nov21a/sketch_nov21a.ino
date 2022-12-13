@@ -14,6 +14,9 @@ float calibration_factor = 370000;
 int mortor = 4;
 int angle = 0; 
 HX711 scale;
+
+int SelectedTime = 9;
+float need = 0.105f;
 float amount = 0.0f;
 
 
@@ -76,7 +79,7 @@ void loop() {
  scale.set_scale(calibration_factor); 
 Serial.print("Reading: ");
 amount = scale.get_units();
-amount -= 0.250; //그릇 무게 빼기
+//amount += 0.249; //그릇 무게 빼기
 Serial.print(amount,3); // 뒤에 있는 숫자는 몇 자리까지 보여줄지입니다.
 
 Serial.print(" kg"); 
@@ -88,15 +91,15 @@ Serial.print(calibration_factor);
 Serial.println();
 
 RtcDateTime now = Rtc.GetDateTime();
- printDateTime(now);
+ //printDateTime(now);
 
-if(now.Second() % 30 == 0 && now.Second() >=5 && amount <0.080) //개방!
+if(SelectedTime % now.Hour() == 0  && amount <need-0.005) //개방!
 {
   angle = -180;
   servo.write(angle);
 }
 
-if(amount >=0.080) //닫기!
+if(amount >= need) //닫기!
 {
   
     angle = 180;
@@ -105,10 +108,9 @@ if(amount >=0.080) //닫기!
     //delay(10);
       Serial.print("\t\t");
       Serial.println(angle);  // 현재 각도 출력
-  
-  
-  
 }
+
+Serial.println(need-amount);
 
 
 }

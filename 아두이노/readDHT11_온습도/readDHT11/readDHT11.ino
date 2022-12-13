@@ -12,10 +12,19 @@
 
 #include <DFRobot_DHT11.h>
 DFRobot_DHT11 DHT;
-#define DHT11_PIN 16
+#define DHT11_PIN 4
+
+int A = 16;
+int B = 5;
+
 
 void setup(){
   Serial.begin(115200);
+    pinMode(A,OUTPUT);
+   pinMode(B,OUTPUT);
+
+    digitalWrite(A,HIGH);
+   digitalWrite(B,HIGH);
 }
 
 void loop(){
@@ -24,5 +33,16 @@ void loop(){
   Serial.print(DHT.temperature);
   Serial.print("  humi:");
   Serial.println(DHT.humidity);
+
+  if(DHT.temperature>25)
+  {
+     digitalWrite(A,LOW);
+   digitalWrite(B,HIGH);
+  }
+  else
+  {
+   digitalWrite(A,HIGH);
+   digitalWrite(B,HIGH);
+  }
   delay(1000);
 }
