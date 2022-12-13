@@ -1,6 +1,11 @@
 # Smart-Dog-House
 Smart Dog House for School Team Project
 
+
+
+
+
+
 스마트 도그 하우스 - 학교 팀 프로젝트
 
 아두이노를 결합한 반려동물 집과 모바일 앱의 연동을 목적으로 한 프로젝트입니다. 부가적으로 빅데이터 분석을 하였습니다.
