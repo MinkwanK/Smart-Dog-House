@@ -1,10 +1,4 @@
 # Smart-Dog-House
-Smart Dog House for School Team Project
-
-
-
-
-
 
 스마트 도그 하우스 - 학교 팀 프로젝트
 
